@@ -4,7 +4,15 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "jest": "jest --watch",
+    "test": "npm run jest --watch"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.tsx?$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+    },
+    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
+    "moduleFileExtensions": [ "ts", "tsx", "js", "jsx", "json" ]
   },
   "keywords": [],
   "author": "",
@@ -17,6 +25,9 @@
     "webpack-dev-server": "^2.7.1"
   },
   "devDependencies": {
-    "jest": "^21.0.2"
+    "@types/jest": "^20.0.8",
+    "eslint": "^4.6.1",
+    "jest": "^21.0.2",
+    "ts-jest": "^21.0.0"
   }
 }
