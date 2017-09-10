@@ -1,4 +1,4 @@
-import Pixel from '../Interfaces/Pixel';
+import State from '../Interfaces/State'; 
 
 export default class LevelBuilder {
     private width: number;
@@ -12,8 +12,8 @@ export default class LevelBuilder {
         this.height = height;
     }
 
-    createLevelState (): Array<Pixel> {
-        const level: Array<Pixel> = [];
+    createLevelState (): State {
+        const level: State = [];
 
         for (let y = 0; y < this.height; y++) {
             for (let x = 0; x < this.width; x++) {

@@ -1,31 +1,34 @@
 import Block from '../Interfaces/Block';
+import State from '../Interfaces/State';
 import Pixel from '../Interfaces/Pixel';
 
 export default class BlockBuilder {
-    createBlockState (block: Block): Array<Pixel>  {
-        return block.map.trim()
+    createBlockState (block: Block): State  {
+        let blockState: State = [];
+        const blockMap = block.map.trim()
             .split('')
-            .filter((char: string) => char.match(/(\d)/))
-            .reduce((pixelBlock: Array<Pixel>, char: string): Array<Pixel> => {
-                // We know that blocks are 4x2
-                // @todo - rethink this a bit, could be cleaner
-                if (pixelBlock.length < 4) {
-                    pixelBlock.push({
-                        x: pixelBlock.length,
-                        y: 1,
-                        occupied: !!parseInt(char),
-                        type: block.name
-                    });
+            .filter((char: string) => char.match(/(\d)/));
+        const half = blockMap.length / 2;
+        
+        return blockMap.map((char: string, index: number) => {
+                let pixel: Pixel = {
+                    x: Infinity,
+                    y: Infinity,
+                    occupied: false,
+                    type: block.name
+                };
+                
+                if (index < half) {
+                    pixel.x = index;
+                    pixel.y = 0;
                 } else {
-                    pixelBlock.splice(pixelBlock.length - 4, 0, {
-                        x: pixelBlock.length - 4,
-                        y: 0,
-                        occupied: !!parseInt(char),
-                        type: block.name
-                    });
+                    pixel.x = index - half;
+                    pixel.y = 1;
                 }
 
-                return pixelBlock;
-            }, []);
+                pixel.occupied = !!parseInt(char);
+
+                return pixel;
+            });
     }
 }
