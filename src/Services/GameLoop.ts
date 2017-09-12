@@ -1,63 +1,75 @@
 import StateTransformer from '../Services/StateTransformer';
 import HTMLRenderer from '../Renderers/HTMLRenderer';
 import State from '../Interfaces/State';
+import Command from '../Interfaces/Command';
 import Spawner from './Spawner';
-import BlockManager from '../Managers/BlockManager';
+import TetrominoManager from '../Managers/TetrominoManager';
+import InputHandler from '../Services/InputHandler';
 import BlockBuilder from './BlockBuilder';
 
 export default class GameLoop {
     private stateTransformer: StateTransformer;
-    private renderer: HTMLRenderer;
     private play: boolean;
-    private spawner: Spawner;
-    private blockManager: BlockManager;
     private levelState: State;
 
     constructor (
-        StateTransformer: StateTransformer, 
-        renderer: HTMLRenderer,
-        spawner: Spawner,
-        blockManager: BlockManager,
+        private StateTransformer: StateTransformer, 
+        private renderer: HTMLRenderer,
+        private spawner: Spawner,
+        private TetrominoManager: TetrominoManager,
+        private inputHandler: InputHandler
     ) {
         this.stateTransformer = StateTransformer;
         this.renderer = renderer;
         this.play = false;
         this.spawner = spawner;
-        this.blockManager = blockManager;
+        this.TetrominoManager = TetrominoManager;
     }
 
+    // @todo - Update should just call services, a big ol' update function is going to be a nightmare
     update (state: State): void {
-        const activeBlock = this.blockManager.getActiveBlock();
+        const activeBlock = this.TetrominoManager.getActiveBlock();
         let blockState: State;
         this.renderer.render(state);
 
         if (this.play) {
+            // 1. Manage active block
+
+
             // block management
             if (!activeBlock) {
                 blockState = this.spawner.spawnBlock();
-                this.blockManager.updateActiveBlock(blockState);
+                this.TetrominoManager.updateActiveBlock(blockState);
             } else {
                 const gravityState: State|false = this.stateTransformer.addGravity(activeBlock, this.levelState,  1);
 
                 if (gravityState) {
-                    this.blockManager.updateActiveBlock(gravityState);
+                    this.TetrominoManager.updateActiveBlock(gravityState);
                 } else {
                     // @todo
                     // need a programtic approach to update level state when block hits floor
                     this.levelState = this.stateTransformer.mergeState(
                         this.levelState,
-                        this.blockManager.getActiveBlock()
+                        this.TetrominoManager.getActiveBlock()
                     );
-                    this.blockManager.archiveBlock();
+                    this.TetrominoManager.archiveBlock();
+                }
+
+                const command: Command|null = this.inputHandler.getNextCommand();
+    
+                if (command) {
+                    this.TetrominoManager.updateActiveBlock(
+                        this.stateTransformer.moveBlock(activeBlock, command)
+                    );
                 }
             }
             
             const nextState = this.stateTransformer.mergeState(
                 this.levelState,
-                this.blockManager.getActiveBlock() || this.levelState
+                this.TetrominoManager.getActiveBlock() || this.levelState
             );
 
-            requestAnimationFrame(this.update.bind(this, nextState));
+            setTimeout(this.update.bind(this, nextState), 500);
         }
     }
 

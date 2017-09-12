@@ -1,4 +1,5 @@
 import State from '../Interfaces/State';
+import Command from '../Interfaces/Command';
 import Row from '../Interfaces/Row';
 import Pixel from '../Interfaces/Pixel';
 
@@ -33,11 +34,12 @@ export default class StateTransformer {
         let collision = false;
 
         // Lol
+        // Look into Immutable.js 
         const blockStateClone = JSON.parse(JSON.stringify(blockState));
 
         const newState = blockStateClone.map((pixel: Pixel) => {
             levelState.forEach((levelPixel: Pixel) => {
-                // @todo - could access blockManager here for a smaller set of data to compare against
+                // @todo - could access TetrominoManager here for a smaller set of data to compare against
                 // calculating + gravity here to see 1 move ahead
                 if (pixel.x === levelPixel.x && pixel.y + gravity === levelPixel.y && levelPixel.occupied) {
                     console.log(pixel, ' -> collided with -> ', levelPixel)
@@ -52,5 +54,18 @@ export default class StateTransformer {
         });
 
         return floor || collision ? false : newState;
+    }
+
+    moveBlock (blockState: State, input: Command): State {
+        // Lol
+        // Look into Immutable.js 
+        const blockStateClone = JSON.parse(JSON.stringify(blockState));
+        // @todo - this will need expanding on in order to acount for other directions
+        const direction = input.name === 'left' ? -1 : 1;
+
+        return blockStateClone.map((pixel: Pixel) => {
+            pixel.x += direction;
+            return pixel;
+        });
     }
 }

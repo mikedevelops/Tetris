@@ -1,6 +1,6 @@
 import State from '../Interfaces/State';
 
-export default class BlockManager {
+export default class TetrominoManager {
     private activeBlock: State|null;
 
     constructor () {
@@ -17,5 +17,12 @@ export default class BlockManager {
 
     archiveBlock (): void {
         this.activeBlock = null;
+    }
+
+    /**
+     * Manage active block state
+     */
+    update () {
+        if (this.ac)
     }
 }
