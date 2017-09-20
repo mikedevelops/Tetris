@@ -7,6 +7,7 @@ export default class TetrominoBuilder {
     createTetromino (blueprint: TetrominoBlueprint): Tetromino {
         let row: number = 0;
         let count: number = 0;
+        
         return {
             placed: false,
             state: blueprint.map

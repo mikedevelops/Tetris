@@ -5,7 +5,6 @@ import Command from '../Interfaces/Command';
 import Spawner from './Spawner';
 import TetrominoManager from '../Managers/TetrominoManager';
 import InputHandler from '../Services/InputHandler';
-import BlockBuilder from './BlockBuilder';
 
 export default class GameLoop {
     private stateTransformer: StateTransformer;

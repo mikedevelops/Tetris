@@ -23,6 +23,5 @@ export default class TetrominoManager {
      * Manage active block state
      */
     update () {
-        if (this.ac)
     }
 }
