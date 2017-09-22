@@ -2,11 +2,11 @@
   "name": "tetris",
   "version": "1.0.0",
   "description": "",
-"main": "index.js",
+  "main": "index.js",
   "scripts": {
     "jest": "jest --watch",
     "test": "npm run jest --watch",
-    "start": "webpack-dev-server --hot --inline"
+    "start": "webpack-dev-server --hot --inline -d"
   },
   "jest": {
     "transform": {
@@ -25,9 +25,14 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/sylvester": "^0.1.5",
+    "@types/victor": "^1.1.0",
     "awesome-typescript-loader": "^3.2.3",
     "source-map-loader": "^0.2.1",
+    "sylvester": "0.0.21",
+    "sylvester-es6": "0.0.2",
     "typescript": "^2.5.2",
+    "victor": "^1.1.0",
     "webpack": "^3.5.6",
     "webpack-dev-server": "^2.7.1"
   },

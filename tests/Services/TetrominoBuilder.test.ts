@@ -1,29 +1,36 @@
 import TetrominoBuilder from '../../src/Services/TetrominoBuilder';
-import Tetromino from '../../src/Interfaces/Tetromino';
-import { T } from '../../src/Resources/TetrominoLibrary';
+import Tetromino from '../../src/Resources/Tetromino';
+import minos from '../../src/Resources/TetrominoLibrary';
+import TetrominoBlueprint from '../../src/Interfaces/TetrominoBlueprint';
+import State from '../../src/Interfaces/State';
+
+jest.mock('../../src/Resources/Tetromino');
 
 describe('TetrominoBuilder', () => {
-    let service: TetrominoBuilder;
+    let tetrominoBuilder: TetrominoBuilder;
+    let mino: TetrominoBlueprint;
 
     beforeEach(() => {
-        service = new TetrominoBuilder();
-    });  
+        mino = minos.find(m => m.name === 'T');
+        tetrominoBuilder = new TetrominoBuilder();
+    });
 
-    describe('createTetromino', () => {
-        test('should create tetromino from blueprint', () => {
-            const tetromino: Tetromino = service.createTetromino(T);
+    describe('createTetrominoFromBlueprint', () => {
+        test('should create tetromino from blueprint'/*, () => {
+            const tetromino: Tetromino = tetrominoBuilder.createTetrominoFromBlueprint('T', mino.map);
+            const state: State[] = mino.preCompiled;
 
-            expect(tetromino).toEqual({
-                placed: false,
-                state: [
-                    { x: 0, y: 0, occupied: false, type: 'T' },
-                    { x: 1, y: 0, occupied: true, type: 'T' },
-                    { x: 2, y: 0, occupied: false, type: 'T' },
-                    { x: 0, y: 1, occupied: true, type: 'T' },
-                    { x: 1, y: 1, occupied: true, type: 'T' },
-                    { x: 2, y: 1, occupied: true, type: 'T' }
-                ]
-            });
+            expect(tetromino).toBeInstanceOf(Tetromino);
+            expect(Tetromino).toBeCalledWith(state);
+        }*/);
+    });
+
+    describe('createTetrominoFromCompiled', () => {
+        test('should create tetromino from pre-compiled blueprint', () => {
+            const tetromino: Tetromino = tetrominoBuilder.createTetrominoFromCompiled('T', mino.preCompiled);
+
+            expect(tetromino).toBeInstanceOf(Tetromino);
+            expect(Tetromino).toBeCalledWith(mino.preCompiled);
         });
     });
 });
