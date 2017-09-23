@@ -47,7 +47,7 @@ const tetrominoBuilder: TetrominoBuilder = new TetrominoBuilder();
 const rotateCW = document.getElementById('rotate-cw');
 const rotateACW = document.getElementById('rotate-acw');
 
-tetromios./*filter(t => t.name === 'T').*/forEach((blueprint: TetrominoBlueprint) => {
+tetromios.filter(t => t.name === 'T').forEach((blueprint: TetrominoBlueprint) => {
     const mino = tetrominoBuilder.createTetrominoFromCompiled(blueprint.name, blueprint.preCompiled);
     const root = document.createElement('div');
     const renderer: HTMLRenderer = new HTMLRenderer(

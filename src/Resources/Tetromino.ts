@@ -40,22 +40,38 @@ export default class Tetromino {
      * @param rotationUnits 
      */
     public rotate (rotationUnits: number): void {
-        const steps: number = rotationUnits * rotationUnits;
-        for (let i = 0; i < steps; i++) {
-            if (rotationUnits > 0 && (this.rotationIndex + steps) === this.maxRotations) {
-                this.rotationIndex = 0;
-            } else if (rotationUnits < 0 && (this.rotationIndex - steps) === -1) {
-                this.rotationIndex = (this.maxRotations - 1);
+        // Clockwise works, anti-clockwise still needs figuring out
+        // This caters for infinite rotation steps (should never be neeed, but nice to work out)
+        // if (rotationUnits > 0) {
+        //     this.rotationIndex = Math.abs((rotationUnits + this.rotationIndex) % this.maxRotations);
+        // } else {
+        //     console.log(
+        //         Math.abs((rotationUnits + this.rotationIndex) % this.maxRotations), 
+        //         ' -> ', 
+        //         (this.rotationIndex + rotationUnits) % this.maxRotations + this.rotationIndex
+        //     );
+        //     this.rotationIndex = (this.rotationIndex + rotationUnits) % this.maxRotations;
+        // }
+
+        // This handles 1 rotation at a time
+        if (rotationUnits > 0) {
+            if ((this.rotationIndex + rotationUnits) < this.maxRotations) {
+                this.rotationIndex = rotationUnits + this.rotationIndex;
             } else {
-                rotationUnits < 0 ? this.rotationIndex-- : this.rotationIndex++;
+                this.rotationIndex = 0;
+            }
+        } else if (rotationUnits < 0) {
+            if ((this.rotationIndex - 1) >= 0) {
+                this.rotationIndex--;
+            } else {
+                this.rotationIndex = (this.maxRotations - 1);
             }
         }
 
         this.activeState = this.state[this.rotationIndex];
 
-        // @todo - Pre-calculate rotation state and import
+        // Handle rotation at runtime without pre-computed state
         // const vector = new Victor(pixel.x, pixel.y);
-
         // 1. create vector from each coordinate
             // a. create translation matrix from 0,0 to center (width / 2)
             // b. rotation matprix for 90deg
