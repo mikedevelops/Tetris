@@ -1,46 +1,40 @@
 import Command from '../Interfaces/Command'
 
 export default class InputHandler {
-    private commandQueue: Command[];
+    private command: Command|null;
 
     constructor () {
-        this.commandQueue = [];
+        this.command = null;
     }
 
     registerInput ({ keyCode }: { keyCode: number}) {
         switch (keyCode) {
             case 37:
-                this.commandQueue.push({ 
+                this.command = { 
                     code: keyCode, 
                     name: 'left', 
                     processed: false 
-                });
+                };
                 break;
             case 39:
-                this.commandQueue.push({ 
+                this.command = { 
                     code: keyCode, 
                     name: 'right', 
                     processed: false 
-                });
+                };
                 break;
         }
     }
 
-    getNextCommand (): Command|null {
-        const next = this.commandQueue.pop();
-
-        if (next && !next.processed) {
-            this.commandQueue.map((command: Command) => {
-                if (!command.processed) {
-                    command.processed = true;
-                }
-
-                return command;
-            });
-
-            return next;
-        } else {
+    /**
+     * Get command
+     */
+    getCommand (): Command|null {
+        if (this.command === null || this.command.processed) {
             return null;
+        } else {
+            this.command.processed = true;
+            return this.command;
         }
     }
 }

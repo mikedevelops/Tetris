@@ -1,71 +1,72 @@
 import State from '../Interfaces/State';
-import Command from '../Interfaces/Command';
-import Row from '../Interfaces/Row';
 import Pixel from '../Interfaces/Pixel';
+import Tetromino from '../Resources/Tetromino';
+import Level from '../Resources/Level';
+import Coordinate from '../Interfaces/Coordinate';
 
-export default class StateTransformer {
-    private width: number;
-    private height: number;
+/**
+ * Merge a level state with tetromino state
+ * @param level 
+ * @param tetromino 
+ * @param width 
+ * @param height
+ */
+export function updateLevelState (level: Level, tetromino: Tetromino): State {
+    return level.getState().map((levelPixel: Pixel): Pixel => {
+        const lp: Coordinate = { x: Math.floor(levelPixel.x), y: Math.floor(levelPixel.y) }; 
+        let pixel: Pixel;
+        
+        if (levelPixel.occupied && !levelPixel.set) {
+            levelPixel.occupied = false;
+            levelPixel.type = null;
+        }
 
-    constructor (width: number, height: number) {
-        this.width = width;
-        this.height = height;
-    }
+        tetromino.getActiveState().forEach((tetrominoPixel: Pixel) => {
+            const tp: Coordinate = { x: Math.floor(tetrominoPixel.x), y: Math.floor(tetrominoPixel.y) }; 
 
-    mergeState (level: State, block: State): State {
-        // Lol
-        // Should get around this with Immutable.js maybe?
-        level = JSON.parse(JSON.stringify(level))
-
-        return level.map((levelPixel: Pixel) => {
-            block.forEach((blockPixel: Pixel) => {
-                if (levelPixel.x === blockPixel.x && levelPixel.y === blockPixel.y) {
-                    levelPixel.occupied = blockPixel.occupied;
-                    levelPixel.type = blockPixel.occupied ? blockPixel.type : null;
-                }
-            });
-
-            return levelPixel;
-        });
-    }
-
-    addGravity (blockState: State, levelState: State, gravity: number): State|false {
-        let floor = false;
-        let collision = false;
-
-        // Lol
-        // Look into Immutable.js 
-        const blockStateClone = JSON.parse(JSON.stringify(blockState));
-
-        const newState = blockStateClone.map((pixel: Pixel) => {
-            levelState.forEach((levelPixel: Pixel) => {
-                // @todo - could access TetrominoManager here for a smaller set of data to compare against
-                // calculating + gravity here to see 1 move ahead
-                if (pixel.x === levelPixel.x && pixel.y + gravity === levelPixel.y && levelPixel.occupied) {
-                    console.log(pixel, ' -> collided with -> ', levelPixel)
-                    collision = true;
-                }
-            });
-            if (pixel.y + gravity === this.height) {
-                floor = true;
+            if (lp.x === tp.x && lp.y === tp.y && tetrominoPixel.occupied) {
+                levelPixel.occupied = true;
+                levelPixel.type = tetrominoPixel.type;
             }
-            pixel.y += gravity;
-            return pixel;
         });
 
-        return floor || collision ? false : newState;
+        return levelPixel;
+    });
+}
+
+export function checkCollision (level: Level, tetromino: Tetromino): boolean {
+    let collision = false;
+    
+    for (let tetrominoPixel of tetromino.getActiveState()) {
+        if (tetrominoPixel.occupied) {
+            const tp: Coordinate = { x: Math.floor(tetrominoPixel.x), y: Math.floor(tetrominoPixel.y) };
+            const levelPixels: { current: Pixel, next: Pixel } = level.getState()
+                .reduce((pixels: { current: Pixel, next: Pixel }, levelPixel): { current: Pixel, next: Pixel } => {
+                    const lp: Coordinate = { x: Math.floor(levelPixel.x), y: Math.floor(levelPixel.y) };
+
+                    // @todo - this needs to account for a variable velocity 9 (I'm thinking of values over 1)
+                    if (tp.x === lp.x) {
+                        if (tp.y === lp.y) {
+                            pixels['current'] = levelPixel;
+                        } else if ((tp.y + 1) === lp.y) {
+                            pixels['next'] = levelPixel;
+                        }
+                    }
+
+                    return pixels;
+                }, { current: null, next: null });
+
+            if (!levelPixels.next || levelPixels.next.set) {
+                // console.log('collision!: ', levelPixels, tetrominoPixel);
+                collision = true;
+                break;
+            }
+        }
     }
 
-    moveBlock (blockState: State, input: Command): State {
-        // Lol
-        // Look into Immutable.js 
-        const blockStateClone = JSON.parse(JSON.stringify(blockState));
-        // @todo - this will need expanding on in order to acount for other directions
-        const direction = input.name === 'left' ? -1 : 1;
-
-        return blockStateClone.map((pixel: Pixel) => {
-            pixel.x += direction;
-            return pixel;
-        });
+    if (collision) {
+        level.setPlaced(tetromino);
     }
+
+    return collision;
 }

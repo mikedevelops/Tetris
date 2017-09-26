@@ -20,7 +20,7 @@ export default class HTMLRenderer {
                 html += '<div class="row">';
             }
             
-            html += `<div class="pixel" data-x="${pixel.x}" data-y="${pixel.y}" ${pixel.occupied ? `data-type=${pixel.type}` : ''}></div>`;
+            html += `<div class="pixel" data-set="${pixel.set}" data-x="${pixel.x}" data-y="${pixel.y}" ${pixel.occupied ? `data-type=${pixel.type}` : ''}></div>`;
 
             if (pixel.x === (this.width - 1)) {
                 html += '</div>';

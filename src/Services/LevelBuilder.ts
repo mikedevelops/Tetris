@@ -12,12 +12,15 @@ export default class LevelBuilder {
         this.height = height;
     }
 
+    /**
+     * Create level state
+     */
     createLevelState (): State {
         const level: State = [];
 
         for (let y = 0; y < this.height; y++) {
             for (let x = 0; x < this.width; x++) {
-                level.push({ x, y, occupied: false, type: null });
+                level.push({ x, y, occupied: false, type: null, set: false });
             }
         }
 

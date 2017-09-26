@@ -1,22 +1,22 @@
-import LevelBuilder from '../../src/Services/LevelBuilder';
+import LeveBuilder from '../../src/Services/LevelBuilder';
 
-describe('LevelBuilder', () => {
-    let service: LevelBuilder;
+describe('LeveBuilder', () => {
+    let levelBuilder;
 
     beforeEach(() => {
-        service = new LevelBuilder(2, 2);
+        levelBuilder = new LeveBuilder(2, 2);
     });
 
     describe('createLevelState', () => {
         test('should create level state', () => {
-            const levelState = service.createLevelState();
-
-            expect(levelState).toEqual([
-                { x: 0, y: 0, occupied: false, type: null }, 
-                { x: 1, y: 0, occupied: false, type: null },
-                { x: 0, y: 1, occupied: false, type: null }, 
-                { x: 1, y: 1, occupied: false, type: null }
-            ]);
-        });
+            expect(levelBuilder.createLevelState()).toEqual(
+                [
+                    { x: 0, y: 0, occupied: false, type: null, set: false },
+                    { x: 1, y: 0, occupied: false, type: null, set: false },
+                    { x: 0, y: 1, occupied: false, type: null, set: false },
+                    { x: 1, y: 1, occupied: false, type: null, set: false }
+                ]
+            );
+        })
     });
 });

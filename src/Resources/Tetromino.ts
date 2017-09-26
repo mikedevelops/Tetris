@@ -1,11 +1,15 @@
+import { InputMap } from './../Interfaces/InputMap';
 import State from '../Interfaces/State';
 import Pixel from '../Interfaces/Pixel';
-import Coordinate from '../Interfaces/Coordinate';
+import Velocity from '../Interfaces/Velocity';
+import Command from '../Interfaces/Command';
 
 export default class Tetromino {
     private maxRotations: number;
     private placed: boolean;
     private activeState: State;
+    private cache: State[];
+    private velocity: Velocity;
 
     /**
      * Tetromino
@@ -16,9 +20,29 @@ export default class Tetromino {
         private state: State[],
         private rotationIndex: number = 0
     ) {
+        this.cache = this.getFreshState(state);
         this.activeState = this.state[this.rotationIndex];
         this.placed = false;
         this.maxRotations = 4;
+        this.velocity = { x: 0, y: 0 };
+    }
+
+    /**
+     * Create copy of state
+     * @param state 
+     */
+    private getFreshState (state: State[]): State[] {
+        return state.map((s: State) => s.map((p: Pixel) => Object.assign({}, p)));
+    }
+
+    /**
+     * Reset instance 
+     */
+    public reset (): void {
+        this.state = this.getFreshState(this.cache);
+        this.activeState = this.state[0];
+        this.placed = false;
+        this.velocity = { x: 0, y: 0 };
     }
 
     /**
@@ -33,6 +57,95 @@ export default class Tetromino {
      */
     public getActiveState (): State {
         return this.activeState;
+    }
+
+    /**
+     * Set placed
+     * @param placed 
+     */
+    public setPlaced (placed: boolean): void {
+        this.placed = placed;
+    }
+    /**
+     * Get placed
+     */
+    public getPlaced (): boolean {
+        return this.placed;
+    }
+
+    /**
+     * Set X velocity
+     * @param x 
+     */
+    public setVelocityX (x: number): void {
+        this.velocity.x = x;
+    }
+
+    /**
+     * Set Y velocity
+     * @param y 
+     */
+    public setVelocityY (y: number): void {
+        this.velocity.y = y;
+    }
+
+    /**
+     * Get velocity
+     */
+    public getVelocity (): Velocity {
+        return this.velocity;
+    }
+
+    /**
+     * Translate on X axis
+     * @param unit 
+     */
+    public translateX (unit: number): void {
+        this.state.map((state: State) => {
+            return state.map((pixel: Pixel) => {
+                pixel.x += unit;
+                return pixel;
+            });
+        });
+    }
+
+    /**
+     * Translate on Y axis
+     * @param unit 
+     */
+    public translateY (unit: number): void {
+        this.state.map((state: State) => {
+            return state.map((pixel: Pixel) => {
+                pixel.y += unit;
+                return pixel;
+            });
+        });
+    }
+
+    /**
+     * Update tetromino state
+     */
+    public update (input: Command|null = null): void {
+        const inputMap: InputMap = {
+            'left': () => this.velocity.x = -1,
+            'right': () => this.velocity.x = 1
+        }
+        
+        if (input !== null) {
+            inputMap[input.name]();
+        }
+
+        this.state.map((state: State) => {
+            return state.map((pixel: Pixel) => {
+                pixel.x += this.velocity.x;
+                pixel.y += this.velocity.y;
+                return pixel;
+            });
+
+        });
+        
+        // reset X velocity after input
+        this.velocity.x = 0;
     }
 
     /**

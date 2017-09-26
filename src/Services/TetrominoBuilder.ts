@@ -29,7 +29,8 @@ export default class TetrominoBuilder {
                             x: count,
                             y: row,
                             occupied: !!parseInt(char),
-                            type: name
+                            type: name,
+                            set: false
                         });
     
                         count++;
