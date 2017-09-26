@@ -20,7 +20,7 @@ import Level from './Resources/Level';
 // const height = Math.floor(window.innerHeight / 20);
 const width: number = 10;
 const height: number = 22;
-const GRAVITY: number = 0.5;
+const GRAVITY: number = 0.25;
 
 const levelBuilder: LevelBuilder = new LevelBuilder(width, height);
 const renderer: HTMLRenderer = new HTMLRenderer(
@@ -95,9 +95,7 @@ renderer.render(sandbox.getState())
 function update (): void {
     frame++;
     
-    if (frame % 4 === 0) {
-        // @todo - re-think this state order
-
+    if (frame % 2 === 0) {
         const input = inputHandler.getCommand();
         
         tetromino.update(input);

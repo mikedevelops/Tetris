@@ -38,9 +38,10 @@ export default class Tetromino {
     /**
      * Reset instance 
      */
-    public reset (): void {
+    public reset (rotationIndex: number = 0): void {
         this.state = this.getFreshState(this.cache);
-        this.activeState = this.state[0];
+        this.rotationIndex = rotationIndex;
+        this.activeState = this.state[this.rotationIndex];
         this.placed = false;
         this.velocity = { x: 0, y: 0 };
     }
@@ -128,8 +129,10 @@ export default class Tetromino {
     public update (input: Command|null = null): void {
         const inputMap: InputMap = {
             'left': () => this.velocity.x = -1,
-            'right': () => this.velocity.x = 1
+            'right': () => this.velocity.x = 1,
+            'up': () => this.rotate(1)
         }
+        
         
         if (input !== null) {
             inputMap[input.name]();
