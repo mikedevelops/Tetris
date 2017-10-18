@@ -3,6 +3,7 @@ import State from '../Interfaces/State';
 import Pixel from '../Interfaces/Pixel';
 import Velocity from '../Interfaces/Velocity';
 import Command from '../Interfaces/Command';
+import Level from './Level';
 
 export default class Tetromino {
     private maxRotations: number;
@@ -13,11 +14,12 @@ export default class Tetromino {
 
     /**
      * Tetromino
-     * @param state 
-     * @param palced 
+     * @param state
+     * @param palced
      */
     constructor (
         private state: State[],
+        private level: Level,
         private rotationIndex: number = 0
     ) {
         this.cache = this.getFreshState(state);
@@ -29,14 +31,14 @@ export default class Tetromino {
 
     /**
      * Create copy of state
-     * @param state 
+     * @param state
      */
     private getFreshState (state: State[]): State[] {
         return state.map((s: State) => s.map((p: Pixel) => Object.assign({}, p)));
     }
 
     /**
-     * Reset instance 
+     * Reset instance
      */
     public reset (rotationIndex: number = 0): void {
         this.state = this.getFreshState(this.cache);
@@ -62,7 +64,7 @@ export default class Tetromino {
 
     /**
      * Set placed
-     * @param placed 
+     * @param placed
      */
     public setPlaced (placed: boolean): void {
         this.placed = placed;
@@ -76,7 +78,7 @@ export default class Tetromino {
 
     /**
      * Set X velocity
-     * @param x 
+     * @param x
      */
     public setVelocityX (x: number): void {
         this.velocity.x = x;
@@ -84,7 +86,7 @@ export default class Tetromino {
 
     /**
      * Set Y velocity
-     * @param y 
+     * @param y
      */
     public setVelocityY (y: number): void {
         this.velocity.y = y;
@@ -99,20 +101,31 @@ export default class Tetromino {
 
     /**
      * Translate on X axis
-     * @param unit 
+     * @param unit
      */
     public translateX (unit: number): void {
-        this.state.map((state: State) => {
-            return state.map((pixel: Pixel) => {
-                pixel.x += unit;
-                return pixel;
+        let move = true;
+
+        this.state.forEach((state: State) => {
+            state.forEach((pixel: Pixel) => {
+                if ((pixel.x + unit) > this.level.getWidth() || (pixel.x + unit) < 0) {
+                    move = false;
+                }
             });
         });
+
+        if (move) {
+            this.state.map((state: State) => {
+                return state.map((pixel: Pixel) => {
+                    pixel.x += unit;
+                });
+            });
+        }
     }
 
     /**
      * Translate on Y axis
-     * @param unit 
+     * @param unit
      */
     public translateY (unit: number): void {
         this.state.map((state: State) => {
@@ -128,12 +141,12 @@ export default class Tetromino {
      */
     public update (input: Command|null = null): void {
         const inputMap: InputMap = {
-            'left': () => this.velocity.x = -1,
-            'right': () => this.velocity.x = 1,
+            'left': () => this.translateX(-1),
+            'right': () => this.translateX(1),
             'up': () => this.rotate(1)
         }
-        
-        
+
+
         if (input !== null) {
             inputMap[input.name]();
         }
@@ -146,14 +159,14 @@ export default class Tetromino {
             });
 
         });
-        
+
         // reset X velocity after input
         this.velocity.x = 0;
     }
 
     /**
-     * Rotate state 
-     * @param rotationUnits 
+     * Rotate state
+     * @param rotationUnits
      */
     public rotate (rotationUnits: number): void {
         // Clockwise works, anti-clockwise still needs figuring out
@@ -162,8 +175,8 @@ export default class Tetromino {
         //     this.rotationIndex = Math.abs((rotationUnits + this.rotationIndex) % this.maxRotations);
         // } else {
         //     console.log(
-        //         Math.abs((rotationUnits + this.rotationIndex) % this.maxRotations), 
-        //         ' -> ', 
+        //         Math.abs((rotationUnits + this.rotationIndex) % this.maxRotations),
+        //         ' -> ',
         //         (this.rotationIndex + rotationUnits) % this.maxRotations + this.rotationIndex
         //     );
         //     this.rotationIndex = (this.rotationIndex + rotationUnits) % this.maxRotations;
@@ -191,7 +204,7 @@ export default class Tetromino {
         // 1. create vector from each coordinate
             // a. create translation matrix from 0,0 to center (width / 2)
             // b. rotation matprix for 90deg
-            // c. create trnslation matrix from center to 0, 0 
+            // c. create trnslation matrix from center to 0, 0
         // 2. multiply a * b * c (Vector.dot(...)) to get final matrix
         // 3. loop through each vector / cooridinate and multiply by final matrix (Vector.dot(...))
     }

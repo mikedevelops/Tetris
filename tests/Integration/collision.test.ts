@@ -35,16 +35,17 @@ describe('"S" collision integration', () => {
             { x: 4, y: 4, occupied: false, type: null, set: false }
         ]);
 
-        tetromino = new Tetromino([
-            [
+        tetromino = new Tetromino(
+            [[
                 { x: 0, y: 0, occupied: false, type: null, set: false },
                 { x: 1, y: 0, occupied: true, type: 'S', set: false },
                 { x: 2, y: 0, occupied: true, type: 'S', set: false },
                 { x: 0, y: 1, occupied: true, type: 'S', set: false },
                 { x: 1, y: 1, occupied: true, type: 'S', set: false },
                 { x: 2, y: 1, occupied: false, type: null, set: false }
-            ]
-        ]);
+            ]],
+            level
+        );
 
         expect(updateLevelState(level, tetromino)).toEqual([
             { x: 0, y: 0, occupied: false, type: null, set: false },
@@ -79,7 +80,7 @@ describe('"S" collision integration', () => {
 
     test('should handle tetromino translation', () => {
         tetromino.translateY(1);
-        
+
         expect(updateLevelState(level, tetromino)).toEqual([
             { x: 0, y: 0, occupied: false, type: null, set: false },
             { x: 1, y: 0, occupied: false, type: null, set: false },
@@ -113,7 +114,7 @@ describe('"S" collision integration', () => {
 
     test('should set tetromino', () => {
         level.setPlaced(tetromino);
-        
+
         expect(level.getState()).toEqual([
             { x: 0, y: 0, occupied: false, type: null, set: false },
             { x: 1, y: 0, occupied: false, type: null, set: false },

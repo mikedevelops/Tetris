@@ -24,7 +24,7 @@ export default class InputHandler {
             }
         }
 
-        this.command = inputMap[event.keyCode];
+        this.command = inputMap[event.keyCode] || null;
     }
 
     /**

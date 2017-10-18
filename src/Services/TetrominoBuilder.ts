@@ -2,13 +2,14 @@ import TetrominoBlueprint from '../Interfaces/TetrominoBlueprint';
 import Tetromino from '../Resources/Tetromino';
 import State from '../Interfaces/State';
 import Pixel from '../Interfaces/Pixel';
+import Level from '../Resources/Level';
 
 export default class TetrominoBuilder {
     /**
-     * Create Tetromino from blueprint 
-     * @param blueprint 
+     * Create Tetromino from blueprint
+     * @param blueprint
      */
-    public createTetrominoFromBlueprint (name: string, map: string[]): Tetromino {
+    public createTetrominoFromBlueprint (name: string, map: string[], level: Level): Tetromino {
         let row: number = 0;
         let count: number = 0;
         const state: State[] = map.map((blueprint: string) => {
@@ -32,21 +33,21 @@ export default class TetrominoBuilder {
                             type: name,
                             set: false
                         });
-    
+
                         count++;
                         return state;
                     }
                 }, []);
         })
 
-        return new Tetromino(state);
+        return new Tetromino(state, level);
     }
 
     /**
      * Create Tetromino from pre-compiled blueprint
-     * @param blueprint 
+     * @param blueprint
      */
-    public createTetrominoFromCompiled (name: string, preCompiledState: State[]): Tetromino {
-        return new Tetromino(preCompiledState);
+    public createTetrominoFromCompiled (name: string, preCompiledState: State[], level: Level, rotationIndex: number = 0): Tetromino {
+        return new Tetromino(preCompiledState, level, rotationIndex);
     }
 }

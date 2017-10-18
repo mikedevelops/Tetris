@@ -6,23 +6,23 @@ import Coordinate from '../Interfaces/Coordinate';
 
 /**
  * Merge a level state with tetromino state
- * @param level 
- * @param tetromino 
- * @param width 
+ * @param level
+ * @param tetromino
+ * @param width
  * @param height
  */
 export function updateLevelState (level: Level, tetromino: Tetromino): State {
-    return level.getState().map((levelPixel: Pixel): Pixel => {
-        const lp: Coordinate = { x: Math.floor(levelPixel.x), y: Math.floor(levelPixel.y) }; 
+    const state: State = level.getState().map((levelPixel: Pixel): Pixel => {
+        const lp: Coordinate = { x: Math.floor(levelPixel.x), y: Math.floor(levelPixel.y) };
         let pixel: Pixel;
-        
+
         if (levelPixel.occupied && !levelPixel.set) {
             levelPixel.occupied = false;
             levelPixel.type = null;
         }
 
         tetromino.getActiveState().forEach((tetrominoPixel: Pixel) => {
-            const tp: Coordinate = { x: Math.floor(tetrominoPixel.x), y: Math.floor(tetrominoPixel.y) }; 
+            const tp: Coordinate = { x: Math.floor(tetrominoPixel.x), y: Math.floor(tetrominoPixel.y) };
 
             if (lp.x === tp.x && lp.y === tp.y && tetrominoPixel.occupied) {
                 levelPixel.occupied = true;
@@ -32,11 +32,13 @@ export function updateLevelState (level: Level, tetromino: Tetromino): State {
 
         return levelPixel;
     });
+
+    console.log(state)
 }
 
 export function checkCollision (level: Level, tetromino: Tetromino): boolean {
     let collision = false;
-    
+
     for (let tetrominoPixel of tetromino.getActiveState()) {
         if (tetrominoPixel.occupied) {
             const tp: Coordinate = { x: Math.floor(tetrominoPixel.x), y: Math.floor(tetrominoPixel.y) };

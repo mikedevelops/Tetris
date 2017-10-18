@@ -35,8 +35,6 @@ export default class Level {
      * @param tetromino 
      */
     setPlaced (tetromino: Tetromino): void {
-        debugger
-
         this.state.map((levelPixel: Pixel) => {
             tetromino.getActiveState().map((tetrominoPixel: Pixel) => {
                 if (!levelPixel.set && tetrominoPixel.occupied && levelPixel.x === tetrominoPixel.x && levelPixel.y === tetrominoPixel.y) {

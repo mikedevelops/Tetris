@@ -5,7 +5,7 @@ export default class HTMLRenderer {
     private root: HTMLElement;
     private width: number;
     private height: number;
-    
+
     constructor (root: HTMLElement, width: number, height: number) {
         this.root = root;
         this.width = width;
@@ -19,8 +19,10 @@ export default class HTMLRenderer {
                 row++;
                 html += '<div class="row">';
             }
-            
+
             html += `<div class="pixel" data-set="${pixel.set}" data-x="${pixel.x}" data-y="${pixel.y}" ${pixel.occupied ? `data-type=${pixel.type}` : ''}></div>`;
+
+            console.log(pixel.x, this.width)
 
             if (pixel.x === (this.width - 1)) {
                 html += '</div>';
